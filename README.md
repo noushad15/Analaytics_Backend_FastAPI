@@ -1,6 +1,6 @@
 # Analaytics_Backend_FastAPI
 
-An anonymized, production-ready FastAPI backend template for portfolio use. Demonstrates clean async architecture, JWT auth scaffolding, and containerized local development without exposing proprietary logic.
+production-ready FastAPI backend template for portfolio use. Demonstrates clean async architecture, JWT auth scaffolding, and containerized local development without exposing proprietary logic.
 
 ## Features
 - FastAPI async application architecture
