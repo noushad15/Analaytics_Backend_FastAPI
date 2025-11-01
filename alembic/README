@@ -1,0 +1,167 @@
+Alembic migrations placeholder. Initialize with `alembic init alembic` if not already created. Place revision scripts in versions/.
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
+from app.api.routes import router as api_router
+
+app = FastAPI(title=settings.PROJECT_NAME, version=settings.API_VERSION, openapi_url=f"{settings.API_V1_STR}/openapi.json")
+
+# CORS setup
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[o for o in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+@app.get("/", summary="Root")
+async def root():
+    return {"message": "Welcome to the Portfolio Analytics API"}
+
+# Include versioned router
+app.include_router(api_router, prefix=settings.API_V1_STR)
+# Analaytics_Backend_FastAPI
+
+An anonymized, production-ready FastAPI backend template showcasing patterns for building a modern analytics/data API service. This is a distilled public version of a larger private system with proprietary logic removed. You can use it as a portfolio project or a starter for your own backend.
+
+## Key Features
+- FastAPI with async SQLAlchemy (PostgreSQL + asyncpg)
+- Modular architecture (core config, db session, routers, models)
+- Pydantic Settings for environment-driven configuration
+- OAuth/JWT-ready security scaffolding (placeholder)
+- Redis-based caching & rate limiting (optional enable)
+- Pagination utilities
+- Background task pattern (Celery optional stub)
+- Alembic-ready migrations structure (stub)
+- Dependency injection examples
+- Clean separation of settings / infrastructure / domain
+
+## Technology Stack
+- Python 3.11+
+- FastAPI
+- SQLAlchemy 2.x (async)
+- Pydantic & pydantic-settings
+- asyncpg (PostgreSQL driver)
+- Redis (cache / limiter – optional)
+- fastapi-cache2, fastapi-limiter, fastapi-pagination
+- Celery (optional for background tasks)
+- Alembic (migrations)
+
+## Project Structure
+```
+Analaytics_Backend_FastAPI/
+  README.md
+  requirements.txt
+  .gitignore
+  app/
+    __init__.py
+    main.py
+    core/
+      __init__.py
+      config.py
+    db/
+      __init__.py
+      session.py
+    models/
+      __init__.py
+      base.py
+    api/
+      __init__.py
+      routes.py
+    services/
+      __init__.py
+      health.py
+  alembic/
+    README
+    versions/  (empty placeholder)
+```
+
+## Quick Start
+### 1. Clone & Enter
+```bash
+git clone https://github.com/your-user/Analaytics_Backend_FastAPI.git
+cd Analaytics_Backend_FastAPI
+```
+
+### 2. Create & Activate Virtual Env
+```bash
+python -m venv .venv
+source .venv/bin/activate  # macOS/Linux
+# Windows: .venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Provide Environment Variables
+Create a local `.env` file (or export vars) with at least:
+```
+PROJECT_NAME=Portfolio Analytics API
+DATABASE_USER=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_NAME=analytics_db
+REDIS_HOST=localhost
+REDIS_PORT=6379
+BACKEND_CORS_ORIGINS=https://localhost,http://localhost:5173
+DEBUG=true
+```
+
+### 5. Run Development Server
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+Visit: http://localhost:8000/docs
+
+## Example Endpoints
+- GET / -> Simple health/info
+- GET /api/v1/health -> Structured service health response
+
+## Optional: Run Redis & Postgres with Docker Compose
+Create a `docker-compose.yml` (not included here for brevity) with Postgres + Redis or adapt from public examples.
+
+## Migrations (Alembic)
+Initialize after installing:
+```bash
+alembic init alembic
+# Adjust alembic.ini sqlalchemy.url to match your env or use env.py dynamic load
+alembic revision -m "create base tables"
+alembic upgrade head
+```
+
+## Background Tasks (Celery - Optional)
+Install `celery` and create a worker module referencing tasks. This template only demonstrates where you'd place service/task code; proprietary tasks removed.
+
+## Security / Auth
+JWT utility hooks left as placeholders. Add user model & token creation endpoints as needed.
+
+## Production Notes
+- Use a process manager (gunicorn with uvicorn workers) for deployment.
+- Tune DB pool + Redis connections based on workload.
+- Configure observability (Sentry / OpenTelemetry) by injecting DSNs / endpoints via env vars.
+
+## Testing
+Add tests under `tests/` (not included). Example command:
+```bash
+pytest -q
+```
+
+## Why This Template
+Demonstrates solid patterns without exposing private business logic: config layering, async DB access, structured routing, and readiness for typical analytics workloads (aggregation, ingestion, reporting) via extendable services.
+
+## License
+MIT
+
+## Future Improvements
+- Add auth / user CRUD
+- Add sample analytics aggregation endpoint
+- Include Docker & CI workflow
+- Provide unit + integration tests
+
+## Disclaimer
+All proprietary code, credentials, and sensitive integrations were intentionally omitted. This is safe to publish publicly as a demonstration of architecture & backend engineering practices.
+
